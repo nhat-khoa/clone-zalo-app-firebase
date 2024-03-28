@@ -88,7 +88,7 @@ public class MessageActivity extends AppCompatActivity {
 //        });
 
         intent = getIntent();
-        String receiverUserId = intent.getStringExtra("userid");
+        String userid = intent.getStringExtra("userid");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +96,7 @@ public class MessageActivity extends AppCompatActivity {
                 String message = txt_message.getText().toString();
                 if (!message.equals("")) {
                     message = message.trim(); // Loại bỏ khoảng trắng ở đầu và cuối chuỗi
-                    sendMessage(firebaseUser.getUid(), receiverUserId, message, new Date().getTime());
+                    sendMessage(firebaseUser.getUid(), userid, message, new Date().getTime());
                 } else {
                     Toast.makeText(MessageActivity.this, "Enter The Message First", Toast.LENGTH_SHORT).show();
                 }
@@ -104,7 +104,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users").child(receiverUserId);
+        databaseReference = FirebaseDatabase.getInstance().getReference("users").child(userid);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -116,7 +116,7 @@ public class MessageActivity extends AppCompatActivity {
                     // Thư viện glide bên ngoài đc add vào để load ảnh từ url
                     Glide.with(MessageActivity.this).load(user.getProfile()).into(profileImage);
                 }
-                readMessage(firebaseUser.getUid(), receiverUserId, user.getProfile());
+                readMessage(firebaseUser.getUid(), userid, user.getProfile());
             }
 
             @Override
@@ -124,7 +124,7 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-        seenMessage(receiverUserId);
+        seenMessage(userid);
     }
 
     private void seenMessage(final String userid) {

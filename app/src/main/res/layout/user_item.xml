@@ -16,10 +16,8 @@
         android:layout_height="wrap_content"
         android:text="username"
         android:id="@+id/username"
-        android:layout_toRightOf="@+id/profileImage"
         android:layout_toEndOf="@+id/profileImage"
         android:layout_marginLeft="10dp"
-        android:layout_centerVertical="true"
         android:textSize="20sp"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -47,5 +45,17 @@
         android:layout_toRightOf="@+id/profileImage"
         android:visibility="gone"
         android:id="@+id/img_off"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/username"
+        android:layout_toRightOf="@+id/profileImage"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:text="Last message"
+        android:textSize="15sp"
+        android:maxLines="1"
+        android:id="@+id/last_message"/>
 
 </RelativeLayout>
