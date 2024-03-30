@@ -15,9 +15,15 @@
         android:theme="@style/Theme.ChatApp"
         tools:targetApi="31">
         <activity
-            android:name=".MessageActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".VideoChatActivity"
             android:exported="false" />
+        <activity
+            android:name=".CallingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MessageActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".StartActivity"
             android:exported="true">

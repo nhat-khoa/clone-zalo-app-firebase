@@ -57,6 +57,7 @@ public class MessageActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     ValueEventListener seenListener;
+    String userid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,16 +80,8 @@ public class MessageActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-//        btn_back.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                finish();
-////                startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-//            }
-//        });
-
         intent = getIntent();
-        String userid = intent.getStringExtra("userid");
+        userid = intent.getStringExtra("userid");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +98,7 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         databaseReference = FirebaseDatabase.getInstance().getReference("users").child(userid);
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
@@ -197,7 +190,14 @@ public class MessageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.call_video) {
-            Toast.makeText(MessageActivity.this, "Coming soon!!!", Toast.LENGTH_SHORT).show();
+            Intent callingIntent = new Intent(MessageActivity.this, CallingActivity.class);
+            callingIntent.putExtra("userid", userid);
+            startActivity(callingIntent);
+//            finish();
+            return true;
+        }
+        if (item.getItemId() == android.R.id.home) {
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -212,7 +212,7 @@ public class MessageActivity extends AppCompatActivity {
         databaseReference.updateChildren(hashMap);
     }
 
-//    @Override
+    //    @Override
 //    protected void onResume() {
 //        super.onResume();
 //        status("online");
@@ -222,6 +222,7 @@ public class MessageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         databaseReference.removeEventListener(seenListener);
+
 //        status("offline");
     }
 }

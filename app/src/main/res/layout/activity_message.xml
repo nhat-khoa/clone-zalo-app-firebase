@@ -60,8 +60,8 @@
             android:layout_marginLeft="5dp"
             android:layout_toLeftOf="@+id/btn_send"
             android:hint="Type a message..."
-            android:textColor="#111"
-            android:textColorHint="#111" />
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/colorPrimaryDark" />
 
         <ImageButton
             android:id="@+id/btn_send"

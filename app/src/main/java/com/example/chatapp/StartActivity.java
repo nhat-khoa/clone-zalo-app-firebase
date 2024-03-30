@@ -93,6 +93,7 @@ public class StartActivity extends AppCompatActivity {
                             map.put("id", user.getUid());
                             map.put("name", user.getDisplayName());
                             map.put("profile", user.getPhotoUrl().toString());
+                            map.put("email", user.getEmail());
                             map.put("status", "offline");
                             database.getReference().child("users").child(user.getUid()).setValue(map);
                             Intent intent = new Intent(StartActivity.this, MainActivity.class);

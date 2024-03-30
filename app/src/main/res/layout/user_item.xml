@@ -18,6 +18,7 @@
         android:id="@+id/username"
         android:layout_toEndOf="@+id/profileImage"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
         android:textSize="20sp"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -51,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/username"
         android:layout_toRightOf="@+id/profileImage"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="1dp"
         android:layout_marginLeft="15dp"
         android:text="Last message"
         android:textSize="15sp"

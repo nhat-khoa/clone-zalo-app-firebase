@@ -16,11 +16,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapp.Fragments.ChatsFragment;
 import com.example.chatapp.Fragments.UsersFragment;
 import com.example.chatapp.Model.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -82,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.addFragment(new UsersFragment(), "Users");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        checkForReceivingCall();
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -130,12 +137,50 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.logout) {
             FirebaseAuth.getInstance().signOut();
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail().build();
+            // xóa token để lần login sau đc chọn account google
+            GoogleSignIn.getClient(this, gso).signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Đăng xuất thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
             startActivity(new Intent(MainActivity.this, StartActivity.class));
             finish();
 //            startActivity(new Intent(MainActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void checkForReceivingCall() {
+
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        usersRef.child(currentUserId).child("Ringing").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing") && !dataSnapshot.hasChild("picked")){
+                    String calledBy = dataSnapshot.child("ringing").getValue().toString();
+                    Intent callingIntent = new Intent(MainActivity.this, CallingActivity.class);
+                    callingIntent.putExtra("userid", calledBy);
+                    startActivity(callingIntent);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void status(String status) {

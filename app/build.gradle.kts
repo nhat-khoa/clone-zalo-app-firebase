@@ -50,4 +50,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
+
+    implementation("com.opentok.android:opentok-android-sdk:2.27.1")
+    implementation("pub.devrel:easypermissions:3.0.0")
 }
