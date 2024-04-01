@@ -28,7 +28,11 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CallingActivity extends AppCompatActivity {
+    private String TAG = CallingActivity.this.getClass().getSimpleName();
     private ImageView cancelCallBtn, acceptCallBtn;
     private String receiverUserId = "";
     private String senderUserId = "";
@@ -37,10 +41,10 @@ public class CallingActivity extends AppCompatActivity {
     private String checker = "";
     private TextView txt_username;
     private CircleImageView civ_profile_image;
-
     private DatabaseReference userRef;
     private MediaPlayer mediaPlayer;
-    private String TAG = CallingActivity.this.getClass().getSimpleName();
+//    private List<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ValueEventListener valueEventListener1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,10 @@ public class CallingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mediaPlayer.stop();
                 checker = "clicked";
+                final HashMap<String, Object> cancel = new HashMap<>();
+                cancel.put("cancel", "cancel");
+                userRef.child(senderUserId).updateChildren(cancel);
+                userRef.child(receiverUserId).updateChildren(cancel);
                 cancelCallingUser();
             }
         });
@@ -150,7 +158,7 @@ public class CallingActivity extends AppCompatActivity {
         });
 
 
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        valueEventListener1 = userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(senderUserId).hasChild("Ringing") && !dataSnapshot.child(senderUserId).hasChild("Calling")) {
@@ -172,6 +180,18 @@ public class CallingActivity extends AppCompatActivity {
                     mediaPlayer.stop();
                     Intent intent = new Intent(CallingActivity.this, VideoChatActivity.class);
                     startActivity(intent);
+                    finish();
+                }
+
+                if (dataSnapshot.child(receiverUserId).hasChild("cancel")) {
+                    userRef.child(receiverUserId).child("cancel").removeValue();
+                    mediaPlayer.stop();
+                    finish();
+                }
+
+                if (dataSnapshot.child(senderUserId).hasChild("cancel")) {
+                    userRef.child(senderUserId).child("cancel").removeValue();
+                    mediaPlayer.stop();
                     finish();
                 }
             }
@@ -249,5 +269,11 @@ public class CallingActivity extends AppCompatActivity {
 
             }
         });
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Gỡ bỏ tất cả các ValueEventListener khi activity kết thúc
+        userRef.removeEventListener(valueEventListener1);
     }
 }

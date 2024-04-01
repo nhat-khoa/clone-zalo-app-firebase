@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         usersRef.child(currentUserId).child("Ringing").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing") && !dataSnapshot.hasChild("picked")){
+                if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing") && !dataSnapshot.hasChild("picked")) {
                     String calledBy = dataSnapshot.child("ringing").getValue().toString();
                     Intent callingIntent = new Intent(MainActivity.this, CallingActivity.class);
                     callingIntent.putExtra("userid", calledBy);

@@ -59,7 +59,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
 
         if (isChat) {
-            lastMessage(user.getId(), holder.last_message);
+            lastMessage(user.getId(), user.getName(), holder.last_message);
         } else {
             holder.last_message.setVisibility(View.GONE);
         }
@@ -107,7 +107,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
     }
 
-    private void lastMessage(final String userid, final TextView last_message) {
+    private void lastMessage(final String userid, final String username, final TextView last_message) {
         theLastMessage = "default";
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("chats");
@@ -117,9 +117,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot sn : snapshot.getChildren()) {
                     Chat chat = sn.getValue(Chat.class);
-                    if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid)
-                            || chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
-                        theLastMessage = chat.getMessage();
+                    if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid)) {
+                        int lastIndex = username.lastIndexOf(' ');
+                        theLastMessage = username.substring(lastIndex + 1) + ": " + chat.getMessage();
+                    } else if (chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
+                        theLastMessage = "You: " + chat.getMessage();
                     }
                 }
                 if (theLastMessage.equals("default")) {

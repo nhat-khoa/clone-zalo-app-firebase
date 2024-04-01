@@ -195,6 +195,7 @@ public class MessageActivity extends AppCompatActivity {
             startActivity(callingIntent);
 //            finish();
             return true;
+
         }
         if (item.getItemId() == android.R.id.home) {
             finish();
