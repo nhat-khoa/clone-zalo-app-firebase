@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.chatapp.Model.Chat;
+import com.example.chatapp.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class CallingActivity extends AppCompatActivity {
     private ImageView cancelCallBtn, acceptCallBtn;
     private String receiverUserId = "";
@@ -30,6 +35,8 @@ public class CallingActivity extends AppCompatActivity {
     private String callingID = "";
     private String ringingID = "";
     private String checker = "";
+    private TextView txt_username;
+    private CircleImageView civ_profile_image;
 
     private DatabaseReference userRef;
     private MediaPlayer mediaPlayer;
@@ -46,6 +53,8 @@ public class CallingActivity extends AppCompatActivity {
 
         mediaPlayer = MediaPlayer.create(this, R.raw.iphone);
 
+        txt_username = findViewById(R.id.username);
+        civ_profile_image = findViewById(R.id.profile_image);
         cancelCallBtn = findViewById(R.id.cancel_call);
         acceptCallBtn = findViewById(R.id.make_call);
 
@@ -79,8 +88,6 @@ public class CallingActivity extends AppCompatActivity {
                         });
             }
         });
-
-
     }
 
     @Override
@@ -105,7 +112,31 @@ public class CallingActivity extends AppCompatActivity {
                                 final HashMap<String, Object> ringingInfo = new HashMap<>();
                                 ringingInfo.put("ringing", senderUserId);
 
-                                userRef.child(receiverUserId).child("Ringing").updateChildren(ringingInfo);
+                                userRef.child(receiverUserId).child("Ringing").updateChildren(ringingInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        // load in4 người nhận
+                                        userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DataSnapshot dataSnapshot = task.getResult();
+                                                    if (dataSnapshot.child(senderUserId).hasChild("Calling") && !dataSnapshot.child(senderUserId).hasChild("Ringing")) {
+                                                        User user = dataSnapshot.child(receiverUserId).getValue(User.class);
+                                                        txt_username.setText(user.getName());
+                                                        if (user.getProfile().equals("default")) {
+                                                            civ_profile_image.setImageResource(R.mipmap.ic_launcher);
+                                                        } else {
+                                                            Glide.with(CallingActivity.this).load(user.getProfile()).into(civ_profile_image);
+                                                        }
+                                                    }
+                                                } else {
+                                                    Log.e(TAG, "Lỗi load thông tin người nhận lên calling activity!!");
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         }
                     });
@@ -118,14 +149,26 @@ public class CallingActivity extends AppCompatActivity {
             }
         });
 
-        userRef.addValueEventListener(new ValueEventListener() {
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(senderUserId).hasChild("Ringing") && !dataSnapshot.child(senderUserId).hasChild("Calling")) {
                     acceptCallBtn.setVisibility(View.VISIBLE);
+
+                    // load in4 người gọi
+                    String userid = dataSnapshot.child(senderUserId).child("Ringing").child("ringing").getValue().toString();
+                    String username = dataSnapshot.child(userid).child("name").getValue(String.class);
+                    String profile_image = dataSnapshot.child(userid).child("profile").getValue(String.class);
+                    txt_username.setText(username);
+                    if (profile_image.equals("default")) {
+                        civ_profile_image.setImageResource(R.mipmap.ic_launcher);
+                    } else {
+                        Glide.with(CallingActivity.this).load(profile_image).into(civ_profile_image);
+                    }
                 }
 
-                if (dataSnapshot.child(receiverUserId).child("Ringing").hasChild("picked")){
+                if (dataSnapshot.child(receiverUserId).child("Ringing").hasChild("picked")) {
                     mediaPlayer.stop();
                     Intent intent = new Intent(CallingActivity.this, VideoChatActivity.class);
                     startActivity(intent);
