@@ -19,6 +19,7 @@
         android:layout_toEndOf="@+id/profileImage"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
+        android:textColor="@color/black"
         android:textSize="20sp"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -57,6 +58,7 @@
         android:text="Last message"
         android:textSize="15sp"
         android:maxLines="1"
+        android:textColor="@color/black"
         android:id="@+id/last_message"/>
 
 </RelativeLayout>

@@ -42,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     private ImageView profileImage;
     private TextView username;
-    private FirebaseUser firebaseUser;
     DatabaseReference reference;
+    DatabaseReference usersRef;
+    private String currentUserId;
+    private ValueEventListener valueEventListener1, valueEventListener2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
-
-        reference.addValueEventListener(new ValueEventListener() {
+        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        reference = FirebaseDatabase.getInstance().getReference("users").child(currentUserId);
+        valueEventListener1 = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
@@ -160,11 +162,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkForReceivingCall() {
-
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        usersRef.child(currentUserId).child("Ringing").addValueEventListener(new ValueEventListener() {
+        valueEventListener2 = usersRef.child(currentUserId).child("Ringing").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing") && !dataSnapshot.hasChild("picked")) {
@@ -182,9 +180,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Gỡ bỏ tất cả các ValueEventListener khi activity kết thúc
+        reference.removeEventListener(valueEventListener1);
+        usersRef.child(currentUserId).child("Ringing").removeEventListener(valueEventListener2);
+    }
 
     private void status(String status) {
-        reference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
+        reference = FirebaseDatabase.getInstance().getReference("users").child(currentUserId);
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
@@ -192,15 +197,15 @@ public class MainActivity extends AppCompatActivity {
         reference.updateChildren(hashMap);
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        status("online");
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        status("offline");
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+    }
 }

@@ -43,7 +43,6 @@ public class CallingActivity extends AppCompatActivity {
     private CircleImageView civ_profile_image;
     private DatabaseReference userRef;
     private MediaPlayer mediaPlayer;
-//    private List<ValueEventListener> valueEventListeners = new ArrayList<>();
     private ValueEventListener valueEventListener1;
 
     @Override
@@ -89,6 +88,8 @@ public class CallingActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isComplete()) {
                                     Intent intent = new Intent(CallingActivity.this, VideoChatActivity.class);
+                                    intent.putExtra("senderUserId", senderUserId);
+                                    intent.putExtra("receiverUserId", receiverUserId);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -179,6 +180,8 @@ public class CallingActivity extends AppCompatActivity {
                 if (dataSnapshot.child(receiverUserId).child("Ringing").hasChild("picked")) {
                     mediaPlayer.stop();
                     Intent intent = new Intent(CallingActivity.this, VideoChatActivity.class);
+                    intent.putExtra("senderUserId", senderUserId);
+                    intent.putExtra("receiverUserId", receiverUserId);
                     startActivity(intent);
                     finish();
                 }

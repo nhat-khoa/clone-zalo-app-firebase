@@ -64,15 +64,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             holder.last_message.setVisibility(View.GONE);
         }
 
-//        if (isChat) {
-//            if (user.getStatus().equals("online")) {
-//                holder.img_on.setVisibility(View.VISIBLE);
-//                holder.img_off.setVisibility(View.GONE);
-//            } else {
-//                holder.img_on.setVisibility(View.GONE);
-//                holder.img_off.setVisibility(View.VISIBLE);
-//            }
-//        }
+        if (isChat) {
+            if (user.getStatus().equals("online")) {
+                holder.img_on.setVisibility(View.VISIBLE);
+                holder.img_off.setVisibility(View.GONE);
+            } else {
+                holder.img_on.setVisibility(View.GONE);
+                holder.img_off.setVisibility(View.VISIBLE);
+            }
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,21 +115,24 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot sn : snapshot.getChildren()) {
-                    Chat chat = sn.getValue(Chat.class);
-                    if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid)) {
-                        int lastIndex = username.lastIndexOf(' ');
-                        theLastMessage = username.substring(lastIndex + 1) + ": " + chat.getMessage();
-                    } else if (chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
-                        theLastMessage = "You: " + chat.getMessage();
+                if (firebaseUser!= null) {
+                    for (DataSnapshot sn : snapshot.getChildren()) {
+                        Chat chat = sn.getValue(Chat.class);
+                        if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid)) {
+                            int lastIndex = username.lastIndexOf(' ');
+                            theLastMessage = username.substring(lastIndex + 1) + ": " + chat.getMessage();
+                        } else if (chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
+                            theLastMessage = "You: " + chat.getMessage();
+                        }
                     }
+                    if (theLastMessage.equals("default")) {
+                        last_message.setText("No Message!!!");
+                    } else {
+                        last_message.setText(theLastMessage);
+                    }
+                    theLastMessage = "default";
                 }
-                if (theLastMessage.equals("default")) {
-                    last_message.setText("No Message!!!");
-                } else {
-                    last_message.setText(theLastMessage);
-                }
-                theLastMessage = "default";
+
             }
 
             @Override

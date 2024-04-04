@@ -51,13 +51,11 @@ public class MessageActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     Intent intent;
     EditText txt_message;
-
     MessageAdapter messageAdapter;
     List<Chat> listChat;
     RecyclerView recyclerView;
-
-    ValueEventListener seenListener;
     String userid;
+    private ValueEventListener valueEventListener1, seenListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +65,7 @@ public class MessageActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
+        getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_back_24_white));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         profileImage = findViewById(R.id.profile_image);
@@ -156,7 +155,7 @@ public class MessageActivity extends AppCompatActivity {
     private void readMessage(final String senderUserId, final String receiverUserId, final String imageUrl) {
         listChat = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("chats");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        valueEventListener1 = databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listChat.clear();
@@ -204,6 +203,15 @@ public class MessageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Gỡ bỏ tất cả các ValueEventListener khi activity kết thúc
+        databaseReference = FirebaseDatabase.getInstance().getReference("chats");
+        databaseReference.removeEventListener(seenListener);
+        databaseReference.removeEventListener(valueEventListener1);
+    }
+
     private void status(String status) {
         databaseReference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
 
@@ -213,17 +221,18 @@ public class MessageActivity extends AppCompatActivity {
         databaseReference.updateChildren(hashMap);
     }
 
-    //    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        status("online");
-//    }
-//
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
+        databaseReference = FirebaseDatabase.getInstance().getReference("chats");
         databaseReference.removeEventListener(seenListener);
 
-//        status("offline");
+        status("offline");
     }
 }
