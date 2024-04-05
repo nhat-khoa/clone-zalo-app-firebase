@@ -5,15 +5,25 @@ public class User {
     private String name;
     private String profile;
     private String status;
+    private String email;
 
-    public User(String id, String name, String profile, String status) {
+    public User(String id, String name, String profile, String status, String email) {
         this.id = id;
         this.name = name;
         this.profile = profile;
         this.status = status;
+        this.email = email;
     }
 
     public User() {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getId() {

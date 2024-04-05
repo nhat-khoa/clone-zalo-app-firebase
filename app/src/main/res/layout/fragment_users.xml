@@ -6,8 +6,21 @@
     android:background="@color/white"
     tools:context=".Fragments.UsersFragment">
 
+  <EditText
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="5dp"
+      android:drawableLeft="@drawable/ic_person_search_24"
+      android:hint="Type an email to search!!!"
+      android:textColorHint="@color/colorPrimaryDark"
+      android:textColor="@color/black"
+      android:backgroundTint="@color/colorPrimaryDark"
+      android:id="@+id/txt_search"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
+        android:layout_below="@+id/txt_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
