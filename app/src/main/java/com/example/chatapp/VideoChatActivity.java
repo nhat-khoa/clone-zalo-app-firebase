@@ -37,7 +37,6 @@ public class VideoChatActivity extends AppCompatActivity implements Session.Sess
     private static String TOKEN = "T1==cGFydG5lcl9pZD00Nzg4MTIxMSZzaWc9MTc3NzdmMjU0MGI3Yzg4NzczZmM4MWI5ZDRkMmM1NDdlNzMyMDQ0NjpzZXNzaW9uX2lkPTJfTVg0ME56ZzRNVEl4TVg1LU1UY3hNakEwTmpFMk16RTBNSDVTYlZSblJ5dFBTRzg1ZGxORVZVRjNlWEV6ZDBsNmNHVi1mbjQmY3JlYXRlX3RpbWU9MTcxMjA0NjE5MiZub25jZT0wLjcwOTgwNDYwNzI4MTQzNDQmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTcxNDYzODE4NyZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
     private static final String LOG_TAG = VideoChatActivity.class.getSimpleName();
     private static final int RC_VIDEO_APP_PERM = 124;
-
     private FrameLayout mPublisherViewController;
     private FrameLayout mSubscriberViewController;
     private Session mSession;

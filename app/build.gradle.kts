@@ -53,4 +53,11 @@ dependencies {
 
     implementation("com.opentok.android:opentok-android-sdk:2.27.1")
     implementation("pub.devrel:easypermissions:3.0.0")
+
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
+//    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
+//    implementation("androidx.multidex:multidex:2.0.1")
+
+
 }
