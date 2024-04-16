@@ -7,11 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.chatapp.Adapter.UserAdapter;
+import com.example.chatapp.CallingActivity;
 import com.example.chatapp.Model.Chat;
 import com.example.chatapp.Model.User;
 import com.example.chatapp.R;
@@ -28,13 +30,14 @@ import java.util.Date;
 import java.util.List;
 
 public class ChatsFragment extends Fragment {
-
+    private String TAG = ChatsFragment.this.getClass().getSimpleName();
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> mUser;
     private List<String> usersList;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference;
+//    private ValueEventListener valueEventListener1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,16 +88,8 @@ public class ChatsFragment extends Fragment {
                 for (DataSnapshot sn : snapshot.getChildren()) {
                     User user = sn.getValue(User.class);
                     for (String id : usersList) {
-                        if (user.getId().equals(id)) {
-                            if (mUser.size() != 0) {
-                                for (User userl : mUser) {
-                                    if (!user.getId().equals(userl.getId())) {
-                                        mUser.add(user);
-                                    }
-                                }
-                            }else{
-                                mUser.add(user);
-                            }
+                        if (user.getId().equals(id) && !mUser.contains(user)) {
+                            mUser.add(user);
                         }
                     }
                 }
@@ -109,4 +104,5 @@ public class ChatsFragment extends Fragment {
             }
         });
     }
+
 }

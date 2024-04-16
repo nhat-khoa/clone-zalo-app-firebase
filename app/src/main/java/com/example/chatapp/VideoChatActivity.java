@@ -66,34 +66,26 @@ public class VideoChatActivity extends AppCompatActivity implements Session.Sess
                 cancel.put("cancel", "cancel");
                 userRef.child(senderUserId).updateChildren(cancel);
                 userRef.child(receiverUserId).updateChildren(cancel);
-
-                if (mPublisher != null) {
-                    mPublisher.destroy();
-                }
-                if (msubscriber != null) {
-                    msubscriber.destroy();
-                }
             }
         });
         valueEventListener1 = userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (mPublisher != null) {
-//                    mPublisher.destroy();
-//                }
-//                if (msubscriber != null) {
-//                    msubscriber.destroy();
-//                }
                 if (dataSnapshot.child(userID).hasChild("Ringing") && dataSnapshot.child(userID).hasChild("cancel")) {
                     userRef.child(userID).child("Ringing").removeValue();
                     userRef.child(userID).child("cancel").removeValue();
 
                     if (mPublisher != null) {
+                        mSession.unpublish(mPublisher);
                         mPublisher.destroy();
+                        mPublisher = null;
                     }
                     if (msubscriber != null) {
+                        mSession.unsubscribe(msubscriber);
                         msubscriber.destroy();
+                        msubscriber = null;
                     }
+                    mSession.disconnect();
                     finish();
                 }
                 if (dataSnapshot.child(userID).hasChild("Calling") && dataSnapshot.child(userID).hasChild("cancel")) {
@@ -101,11 +93,16 @@ public class VideoChatActivity extends AppCompatActivity implements Session.Sess
                     userRef.child(userID).child("cancel").removeValue();
 
                     if (mPublisher != null) {
+                        mSession.unpublish(mPublisher);
                         mPublisher.destroy();
+                        mPublisher = null;
                     }
                     if (msubscriber != null) {
+                        mSession.unsubscribe(msubscriber);
                         msubscriber.destroy();
+                        msubscriber = null;
                     }
+                    mSession.disconnect();
                     finish();
                 }
 
@@ -167,7 +164,6 @@ public class VideoChatActivity extends AppCompatActivity implements Session.Sess
 
     @Override
     public void onConnected(Session session) {
-
         Log.i(LOG_TAG, "Session Connected");
         mPublisher = new Publisher.Builder(this).build();
         mPublisher.setPublisherListener(VideoChatActivity.this);
@@ -186,7 +182,6 @@ public class VideoChatActivity extends AppCompatActivity implements Session.Sess
 
     @Override
     public void onStreamReceived(Session session, Stream stream) {
-
         Log.i(LOG_TAG, "Stream Received");
         if (msubscriber == null) {
             msubscriber = new Subscriber.Builder(this, stream).build();
@@ -198,10 +193,13 @@ public class VideoChatActivity extends AppCompatActivity implements Session.Sess
     @Override
     public void onStreamDropped(Session session, Stream stream) {
         Log.i(LOG_TAG, "Stream Dropped");
-
         if (msubscriber != null) {
             msubscriber = null;
             mSubscriberViewController.removeAllViews();
+        }
+        if (mPublisher != null) {
+            mPublisher = null;
+            mPublisherViewController.removeAllViews();
         }
     }
 

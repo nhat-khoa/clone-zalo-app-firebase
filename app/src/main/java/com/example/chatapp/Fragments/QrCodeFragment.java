@@ -107,8 +107,8 @@ public class QrCodeFragment extends Fragment {
 
     ActivityResultLauncher<ScanOptions> barLaucher = registerForActivityResult(new ScanContract(), result ->
     {
-        if (result.getContents() != null) {
-            String userIdFromQRCode = result.getContents();
+        String userIdFromQRCode = result.getContents();
+        if (userIdFromQRCode != null && !userIdFromQRCode.equals(userId)) {
             Task<DataSnapshot> task = databaseReference.child("users").get();
             task.addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
