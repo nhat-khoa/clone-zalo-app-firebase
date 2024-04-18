@@ -25,6 +25,11 @@ import com.bumptech.glide.Glide;
 import com.example.chatapp.Adapter.MessageAdapter;
 import com.example.chatapp.Model.Chat;
 import com.example.chatapp.Model.User;
+import com.example.chatapp.Notification.APIService;
+import com.example.chatapp.Notification.Client;
+import com.example.chatapp.Notification.Data;
+import com.example.chatapp.Notification.MyResponse;
+import com.example.chatapp.Notification.Sender;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -40,6 +45,9 @@ import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -49,6 +57,7 @@ public class MessageActivity extends AppCompatActivity {
     ImageButton btn_send;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference;
+    DatabaseReference tokenRef;
     Intent intent;
     EditText txt_message;
     MessageAdapter messageAdapter;
@@ -56,6 +65,7 @@ public class MessageActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     String userid;
     private ValueEventListener valueEventListener1, seenListener;
+    private APIService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +92,10 @@ public class MessageActivity extends AppCompatActivity {
         intent = getIntent();
         userid = intent.getStringExtra("userid");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        tokenRef = FirebaseDatabase.getInstance().getReference("tokens");
+
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +103,7 @@ public class MessageActivity extends AppCompatActivity {
                 if (!message.equals("")) {
                     message = message.trim(); // Loại bỏ khoảng trắng ở đầu và cuối chuỗi
                     sendMessage(firebaseUser.getUid(), userid, message, new Date().getTime());
+                    sendNotification(firebaseUser.getDisplayName(), message);
                 } else {
                     Toast.makeText(MessageActivity.this, "Enter The Message First", Toast.LENGTH_SHORT).show();
                 }
@@ -117,6 +132,37 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
         seenMessage(userid);
+    }
+
+    private void sendNotification(String senderName, String message) {
+        tokenRef.child(userid).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String token = dataSnapshot.getValue(String.class);
+                Data data = new Data(senderName, message);
+                Sender sender = new Sender(data, token);
+                apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
+                    @Override
+                    public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                        if (response.code() == 200) {
+                            if (response.body().success != 1) {
+                                Toast.makeText(MessageActivity.this, "Failed ", Toast.LENGTH_LONG);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void seenMessage(final String userid) {

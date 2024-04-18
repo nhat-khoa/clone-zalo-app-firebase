@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,28 +28,31 @@ import com.example.chatapp.Fragments.ProfileFragment;
 import com.example.chatapp.Fragments.QrCodeFragment;
 import com.example.chatapp.Fragments.UsersFragment;
 import com.example.chatapp.Model.User;
+import com.example.chatapp.Notification.Token;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
     Toolbar toolbar;
     private ImageView profileImage;
     private TextView username;
     DatabaseReference reference;
     DatabaseReference usersRef;
+    DatabaseReference tokenRef;
     private String currentUserId;
     private ValueEventListener valueEventListener1, valueEventListener2;
     private int colorPrimary;
@@ -73,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         usersRef = FirebaseDatabase.getInstance().getReference().child("users");
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         reference = FirebaseDatabase.getInstance().getReference("users").child(currentUserId);
+        tokenRef = FirebaseDatabase.getInstance().getReference("tokens");
+
         valueEventListener1 = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -131,6 +137,47 @@ public class MainActivity extends AppCompatActivity {
         });
 
         checkForReceivingCall();
+        updateToken();
+    }
+
+    private void checkForReceivingCall() {
+        valueEventListener2 = usersRef.child(currentUserId).child("Ringing").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing") && !dataSnapshot.hasChild("picked")) {
+                    String calledBy = dataSnapshot.child("ringing").getValue().toString();
+                    Intent callingIntent = new Intent(MainActivity.this, CallingActivity.class);
+                    callingIntent.putExtra("userid", calledBy);
+                    startActivity(callingIntent);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void updateToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        // Lấy token thành công
+                        String tokenStr = task.getResult();
+                        Log.d(TAG, "FCM Token: " + tokenStr);
+
+                        // Tiến hành lưu token lên realtime database
+                        Token token = new Token(tokenStr);
+                        tokenRef.child(currentUserId).setValue(token);
+                    }
+                });
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -201,25 +248,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void checkForReceivingCall() {
-        valueEventListener2 = usersRef.child(currentUserId).child("Ringing").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing") && !dataSnapshot.hasChild("picked")) {
-                    String calledBy = dataSnapshot.child("ringing").getValue().toString();
-                    Intent callingIntent = new Intent(MainActivity.this, CallingActivity.class);
-                    callingIntent.putExtra("userid", calledBy);
-                    startActivity(callingIntent);
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
