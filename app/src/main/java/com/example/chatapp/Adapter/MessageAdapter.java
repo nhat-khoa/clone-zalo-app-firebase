@@ -59,12 +59,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Date date = new Date(chat.getTime());
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
         holder.show_time.setText(formatter.format(date));
-        if (imageUrl.equals("default")) {
-            holder.profile_image.setImageResource(R.mipmap.ic_launcher);
-        } else {
-            // Thư viện glide bên ngoài đc add vào để load ảnh từ url
-            Glide.with(mContext).load(imageUrl).into(holder.profile_image);
-        }
+        Glide.with(mContext).load(imageUrl).into(holder.profile_image);
 
         if (position == (mChat.size() - 1)){
             if(chat.isIsseen()){

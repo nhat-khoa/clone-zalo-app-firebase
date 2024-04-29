@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -91,16 +92,30 @@ public class StartActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = auth.getCurrentUser();
-                            HashMap<String, Object> map = new HashMap<>();
-                            map.put("id", user.getUid());
-                            map.put("name", user.getDisplayName());
-                            map.put("profile", user.getPhotoUrl().toString());
-                            map.put("email", user.getEmail());
-                            map.put("status", "offline");
-                            database.getReference().child("users").child(user.getUid()).setValue(map);
-                            Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            // kiểm tra xem user có tồn tại trong db hay chưa, nếu chưa thì lưu thông tin user lại
+                            database.getReference().child("users").child(user.getUid()).get()
+                                    .addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DataSnapshot dataSnapshot) {
+                                            if (!dataSnapshot.exists()) {
+                                                HashMap<String, Object> map = new HashMap<>();
+                                                map.put("id", user.getUid());
+                                                map.put("name", user.getDisplayName());
+                                                map.put("profile", user.getPhotoUrl().toString());
+                                                map.put("email", user.getEmail());
+                                                map.put("status", "offline");
+                                                database.getReference().child("users").child(user.getUid()).setValue(map);
+                                            }
+                                            Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(StartActivity.this, "Đăng nhập thất bại!!!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                         } else {
                             Toast.makeText(StartActivity.this, "Fail", Toast.LENGTH_SHORT).show();
                         }

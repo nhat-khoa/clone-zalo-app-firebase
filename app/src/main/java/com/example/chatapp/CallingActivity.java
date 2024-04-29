@@ -133,11 +133,7 @@ public class CallingActivity extends AppCompatActivity {
                                                     if (dataSnapshot.child(senderUserId).hasChild("Calling") && !dataSnapshot.child(senderUserId).hasChild("Ringing")) {
                                                         User user = dataSnapshot.child(receiverUserId).getValue(User.class);
                                                         txt_username.setText(user.getName());
-                                                        if (user.getProfile().equals("default")) {
-                                                            civ_profile_image.setImageResource(R.mipmap.ic_launcher);
-                                                        } else {
-                                                            Glide.with(CallingActivity.this).load(user.getProfile()).into(civ_profile_image);
-                                                        }
+                                                        Glide.with(CallingActivity.this).load(user.getProfile()).into(civ_profile_image);
                                                     }
                                                 } else {
                                                     Log.e(TAG, "Lỗi load thông tin người nhận lên calling activity!!");
@@ -170,11 +166,7 @@ public class CallingActivity extends AppCompatActivity {
                     String username = dataSnapshot.child(userid).child("name").getValue(String.class);
                     String profile_image = dataSnapshot.child(userid).child("profile").getValue(String.class);
                     txt_username.setText(username);
-                    if (profile_image.equals("default")) {
-                        civ_profile_image.setImageResource(R.mipmap.ic_launcher);
-                    } else {
-                        Glide.with(CallingActivity.this).load(profile_image).into(civ_profile_image);
-                    }
+                    Glide.with(CallingActivity.this).load(profile_image).into(civ_profile_image);
                 }
 
                 if (dataSnapshot.child(receiverUserId).child("Ringing").hasChild("picked")) {

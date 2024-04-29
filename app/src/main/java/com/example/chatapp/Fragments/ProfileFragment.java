@@ -72,18 +72,15 @@ public class ProfileFragment extends Fragment {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
-        storageReference = FirebaseStorage.getInstance().getReference("uploadAvatarUser");
+        storageReference = FirebaseStorage.getInstance().getReference("AvatarUsers");
 
         valueEventListener1 = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 username.setText(user.getName());
-                if (user.getProfile().equals("default")) {
-                    profile_image.setImageResource(R.mipmap.ic_launcher);
-                } else {
-                    // Thư viện glide bên ngoài đc add vào để load ảnh từ url
-                    Glide.with(getContext()).load(user.getProfile()).into(profile_image);
+                if (getActivity() != null) {
+                    Glide.with(getActivity()).load(user.getProfile()).into(profile_image);
                 }
             }
 

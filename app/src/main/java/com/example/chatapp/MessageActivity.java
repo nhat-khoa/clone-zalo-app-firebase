@@ -117,12 +117,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 username.setText(user.getName());
-                if (user.getProfile().equals("default")) {
-                    profileImage.setImageResource(R.mipmap.ic_launcher);
-                } else {
-                    // Thư viện glide bên ngoài đc add vào để load ảnh từ url
-                    Glide.with(MessageActivity.this).load(user.getProfile()).into(profileImage);
-                }
+                Glide.with(MessageActivity.this).load(user.getProfile()).into(profileImage);
                 readMessage(firebaseUser.getUid(), userid, user.getProfile());
             }
 

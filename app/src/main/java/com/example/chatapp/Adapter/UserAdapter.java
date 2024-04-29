@@ -51,12 +51,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull UserAdapter.ViewHolder holder, int position) {
         User user = mUsers.get(position);
         holder.username.setText(user.getName());
-        if (user.getProfile().equals("default")) {
-            holder.profileImage.setImageResource(R.mipmap.ic_launcher);
-        } else {
-            // Thư viện glide bên ngoài đc add vào để load ảnh từ url
-            Glide.with(mContext).load(user.getProfile()).into(holder.profileImage);
-        }
+        Glide.with(mContext).load(user.getProfile()).into(holder.profileImage);
 
         if (isChat) {
             lastMessage(user.getId(), user.getName(), holder.last_message);
