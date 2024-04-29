@@ -60,26 +60,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void updateToken() {
-        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("tokens");
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("tokens");
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                                return;
+                            }
+                            // Lấy token thành công
+                            String tokenStr = task.getResult();
+                            Log.d(TAG, "FCM Token: " + tokenStr);
+
+                            // Tiến hành lưu token lên realtime database
+                            Token token = new Token(tokenStr);
+                            tokenRef.child(currentUserId).setValue(token);
                         }
-                        // Lấy token thành công
-                        String tokenStr = task.getResult();
-                        Log.d(TAG, "FCM Token: " + tokenStr);
-
-                        // Tiến hành lưu token lên realtime database
-                        Token token = new Token(tokenStr);
-                        tokenRef.child(currentUserId).setValue(token);
-                    }
-                });
+                    });
+        }
     }
 }
 

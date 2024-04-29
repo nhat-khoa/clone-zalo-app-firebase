@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -18,18 +19,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.chatapp.CaptureAct;
 import com.example.chatapp.MessageActivity;
 import com.example.chatapp.Model.User;
+import com.example.chatapp.Notification.APIService;
+import com.example.chatapp.Notification.Client;
+import com.example.chatapp.Notification.Data;
+import com.example.chatapp.Notification.MyResponse;
+import com.example.chatapp.Notification.Sender;
 import com.example.chatapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -41,6 +50,10 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import java.util.Date;
 import java.util.HashMap;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class QrCodeFragment extends Fragment {
     private String TAG = QrCodeFragment.this.getClass().getSimpleName();
     private ImageView imageView;
@@ -48,7 +61,8 @@ public class QrCodeFragment extends Fragment {
     private TextView txt_username;
     private String userId;
     FirebaseUser firebaseUser;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReference, tokenRef;
+    private APIService apiService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,7 +75,11 @@ public class QrCodeFragment extends Fragment {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         userId = firebaseUser.getUid();
+
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        tokenRef = FirebaseDatabase.getInstance().getReference("tokens");
+
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
@@ -129,9 +147,12 @@ public class QrCodeFragment extends Fragment {
                                 hashMap.put("isseen", false);
                                 databaseReference.child("chats").push().setValue(hashMap);
 
+                                sendNotification(firebaseUser.getDisplayName(), "Hello, I'm from QR Code!!!", userIdFromQRCode);
+
                                 Intent intent = new Intent(getActivity(), MessageActivity.class);
                                 intent.putExtra("userid", userIdFromQRCode);
                                 startActivity(intent);
+                                break;
                             }
                         }
                         if (!isValidQrCode) {
@@ -152,5 +173,36 @@ public class QrCodeFragment extends Fragment {
             });
         }
     });
+
+    private void sendNotification(String senderName, String message, String receiverUserId) {
+        tokenRef.child(receiverUserId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String token = dataSnapshot.getValue(String.class);
+                Data data = new Data(senderName, message);
+                Sender sender = new Sender(data, token);
+                apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
+                    @Override
+                    public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                        if (response.code() == 200) {
+                            if (response.body().success != 1) {
+                                Toast.makeText(getContext(), "Failed ", Toast.LENGTH_LONG);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }
