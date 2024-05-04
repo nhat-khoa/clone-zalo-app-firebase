@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -25,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
@@ -37,10 +41,24 @@ public class StartActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 20;
     private FirebaseUser firebaseUser;
 
+    EditText signupName,signupEmail,signupUsername,signupPassword;
+    TextView loginRedirectText;
+    Button signupButton;
+    DatabaseReference reference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        signupButton=findViewById(R.id.signup_btn);
+        signupEmail=findViewById(R.id.signup_email);
+        signupUsername=findViewById(R.id.signup_username);
+        signupPassword=findViewById(R.id.signup_pass);
+        signupName=findViewById(R.id.signup_name);
+        loginRedirectText=findViewById(R.id.loginRedirectText);
+
+
+
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
@@ -52,6 +70,32 @@ public class StartActivity extends AppCompatActivity {
         btn_loginWithGG = findViewById(R.id.btn_loginWithGG);
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+
+        reference = database.getReference("user");
+        signupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = signupName.getText().toString();
+                String email = signupEmail.getText().toString();
+                String userName = signupUsername.getText().toString();
+                String password = signupPassword.getText().toString();
+
+                HelperClass helperClass = new HelperClass(name,email,userName,password);
+                reference.child(name).setValue(helperClass);
+
+                Toast.makeText(StartActivity.this,"Signup Successfully",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(StartActivity.this, LoginScreen.class);
+                startActivity(intent);
+            }
+        });
+        loginRedirectText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StartActivity.this, LoginScreen.class);
+                startActivity(intent);
+            }
+        });
+        //login by GG
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail().build();
@@ -79,13 +123,14 @@ public class StartActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 fireBaseAuth(account.getIdToken());
             } catch (Exception e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(StartActivity.this, e.getMessage()+"e.getMessage() loi o day", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void fireBaseAuth(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -113,13 +158,15 @@ public class StartActivity extends AppCompatActivity {
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(StartActivity.this, "Đăng nhập thất bại!!!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(), "Login successfully", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                         } else {
-                            Toast.makeText(StartActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
+
 }
