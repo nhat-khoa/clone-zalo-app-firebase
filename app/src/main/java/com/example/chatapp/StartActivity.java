@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class StartActivity extends AppCompatActivity {
     private Button btn_loginWithGG;
@@ -79,10 +80,11 @@ public class StartActivity extends AppCompatActivity {
                 String email = signupEmail.getText().toString();
                 String userName = signupUsername.getText().toString();
                 String password = signupPassword.getText().toString();
-
-                HelperClass helperClass = new HelperClass(name,email,userName,password);
-                reference.child(name).setValue(helperClass);
-
+                String status = "offline";
+                String profile = "https://firebasestorage.googleapis.com/v0/b/chatapp-2bad8.appspot.com/o/AvatarUsers%2F1714368520082.jpg?alt=media&token=9dbc2b12-5202-4e4a-842b-bc82fbf4a06d";
+                String id = UUID.randomUUID().toString();
+                HelperClass helperClass = new HelperClass(name,id,email,userName,password,status,profile);
+                reference.child(id).setValue(helperClass);
                 Toast.makeText(StartActivity.this,"Signup Successfully",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(StartActivity.this, LoginScreen.class);
                 startActivity(intent);

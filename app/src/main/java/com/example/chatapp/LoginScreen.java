@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -80,31 +83,32 @@ public class LoginScreen extends AppCompatActivity {
         String userPassword= loginPassword.getText().toString().trim();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
-        Query checkUserDatabase = reference.orderByChild("username").equalTo(userUsername);
-    System.out.print("checkUserDatabase"+checkUserDatabase);
+        Query checkUserDatabase = reference.orderByChild("name").equalTo(userUsername);
         checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+                if (snapshot.exists() && snapshot.child(userUsername).exists()) {
                     loginUsername.setError(null);
-                    String passwordFromDB=snapshot.child(userUsername).child("password").getValue(String.class);
-                    if(!Objects.equals(passwordFromDB,userPassword)){
-                        loginUsername.setError(null);
-                        Intent intent = new Intent(LoginScreen.this,MainActivity.class);
+                    String passwordFromDB = snapshot.child(userUsername).child("password").getValue(String.class);
+                    if (Objects.equals(passwordFromDB, userPassword)) {
+                        Intent intent = new Intent(LoginScreen.this, MainActivity.class);
                         startActivity(intent);
-                    }else{
+                        Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_SHORT).show();
+                    } else {
                         loginPassword.setError("Invalid Credentials");
                         loginPassword.requestFocus();
                     }
-                }else{
-                    loginUsername.setError(("User does not exist"));
+                } else {
+                    loginUsername.setError("User does not exist");
                     loginUsername.requestFocus();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Handle possible errors more gracefully
+                loginUsername.setError("Error checking user database");
+                loginUsername.requestFocus();
             }
         });
     }
