@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +30,7 @@ public class LoginScreen extends AppCompatActivity {
     EditText loginUsername,loginPassword;
     Button loginButton;
     TextView signupRedirectText;
+    FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +40,7 @@ public class LoginScreen extends AppCompatActivity {
         loginPassword = findViewById(R.id.login_pass);
         signupRedirectText = findViewById(R.id.SignupRedirectText);
         loginButton = findViewById(R.id.login_btn);
+        auth = FirebaseAuth.getInstance();
 
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -82,34 +89,24 @@ public class LoginScreen extends AppCompatActivity {
         String userUsername= loginUsername.getText().toString().trim();
         String userPassword= loginPassword.getText().toString().trim();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
-        Query checkUserDatabase = reference.orderByChild("name").equalTo(userUsername);
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && snapshot.child(userUsername).exists()) {
-                    loginUsername.setError(null);
-                    String passwordFromDB = snapshot.child(userUsername).child("password").getValue(String.class);
-                    if (Objects.equals(passwordFromDB, userPassword)) {
-                        Intent intent = new Intent(LoginScreen.this, MainActivity.class);
-                        startActivity(intent);
-                        Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_SHORT).show();
-                    } else {
-                        loginPassword.setError("Invalid Credentials");
-                        loginPassword.requestFocus();
+        if(TextUtils.isEmpty(userUsername)){
+            loginUsername.setError("Email cannot be empty");
+            loginUsername.requestFocus();
+        }else if(TextUtils.isEmpty(userPassword)){
+            loginPassword.setError("Password cannot be empty");
+            loginPassword.requestFocus();
+        }else{
+            auth.signInWithEmailAndPassword(userUsername,userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(LoginScreen.this, "Login Successfully", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginScreen.this,MainActivity.class));
+                    }else{
+                        Toast.makeText(LoginScreen.this, "Login Error", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    loginUsername.setError("User does not exist");
-                    loginUsername.requestFocus();
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle possible errors more gracefully
-                loginUsername.setError("Error checking user database");
-                loginUsername.requestFocus();
-            }
-        });
+            });
+        }
     }
 }

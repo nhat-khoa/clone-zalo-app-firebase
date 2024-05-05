@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -73,21 +74,12 @@ public class StartActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
 
         reference = database.getReference("user");
-        signupButton.setOnClickListener(new View.OnClickListener() {
+        signupButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                String name = signupName.getText().toString();
-                String email = signupEmail.getText().toString();
-                String userName = signupUsername.getText().toString();
-                String password = signupPassword.getText().toString();
-                String status = "offline";
-                String profile = "https://firebasestorage.googleapis.com/v0/b/chatapp-2bad8.appspot.com/o/AvatarUsers%2F1714368520082.jpg?alt=media&token=9dbc2b12-5202-4e4a-842b-bc82fbf4a06d";
-                String id = UUID.randomUUID().toString();
-                HelperClass helperClass = new HelperClass(name,id,email,userName,password,status,profile);
-                reference.child(id).setValue(helperClass);
-                Toast.makeText(StartActivity.this,"Signup Successfully",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(StartActivity.this, LoginScreen.class);
-                startActivity(intent);
+            public boolean onLongClick(View view) {
+                Toast.makeText(StartActivity.this, "click hered", Toast.LENGTH_SHORT).show();
+                createUser();
+                return true; // Trả về true để chỉ định rằng sự kiện được xử lý hoàn toàn
             }
         });
         loginRedirectText.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +106,33 @@ public class StartActivity extends AppCompatActivity {
     private void googleSignIn() {
         Intent intent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(intent, RC_SIGN_IN);
+    }
+
+    private void createUser(){
+        String email= signupEmail.getText().toString().trim();
+        String password= signupPassword.getText().toString().trim();
+
+        if(TextUtils.isEmpty(email)){
+            signupEmail.setError("Email cannot be empty");
+            signupEmail.requestFocus();
+        } else if (TextUtils.isEmpty(password)) {
+            signupPassword.setError("Password cannot be empty");
+            signupEmail.requestFocus();
+        }else{
+            Log.i("","no co vo day");
+            auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(StartActivity.this, "User resgister Successfully", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(StartActivity.this,LoginScreen.class));
+                    }else{
+                        Toast.makeText(StartActivity.this, "Registration Error"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            });
+        }
     }
 
     @Override
