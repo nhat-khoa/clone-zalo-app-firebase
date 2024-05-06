@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -83,7 +84,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                username.setText(user.getName());
+               if(!TextUtils.isEmpty(user.getName())){
+                   username.setText(user.getName());
+               }else{
+                   username.setText("Customer");
+               }
                 Glide.with(MainActivity.this).load(user.getProfile()).into(profileImage);
             }
 
@@ -256,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
+
 
         reference.updateChildren(hashMap);
     }
