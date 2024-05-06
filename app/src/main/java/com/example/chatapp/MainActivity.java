@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-            startActivity(new Intent(MainActivity.this, StartActivity.class));
+            startActivity(new Intent(MainActivity.this, LoginView.class));
             finish();
 //            startActivity(new Intent(MainActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             return true;
