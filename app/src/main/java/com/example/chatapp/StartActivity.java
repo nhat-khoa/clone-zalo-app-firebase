@@ -119,6 +119,7 @@ public class StartActivity extends AppCompatActivity {
             signupPassword.setError("Password cannot be empty");
             signupEmail.requestFocus();
         }else{
+            Log.i("","no co vo day");
             auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
