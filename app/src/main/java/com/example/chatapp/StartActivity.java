@@ -57,10 +57,8 @@ public class StartActivity extends AppCompatActivity {
         signupUsername=findViewById(R.id.signup_username);
         signupPassword=findViewById(R.id.signup_pass);
         signupName=findViewById(R.id.signup_name);
+        btn_loginWithGG = findViewById(R.id.btn_loginWithGG);
         loginRedirectText=findViewById(R.id.loginRedirectText);
-
-
-
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
@@ -69,10 +67,8 @@ public class StartActivity extends AppCompatActivity {
             finish();
         }
 
-        btn_loginWithGG = findViewById(R.id.btn_loginWithGG);
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
         reference = database.getReference("user");
         signupButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -85,7 +81,7 @@ public class StartActivity extends AppCompatActivity {
         loginRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, LoginScreen.class);
+                Intent intent = new Intent(StartActivity.this, LoginView.class);
                 startActivity(intent);
             }
         });
@@ -125,7 +121,7 @@ public class StartActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         Toast.makeText(StartActivity.this, "User resgister Successfully", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(StartActivity.this,LoginScreen.class));
+                        startActivity(new Intent(StartActivity.this,LoginView.class));
                     }else{
                         Toast.makeText(StartActivity.this, "Registration Error"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 

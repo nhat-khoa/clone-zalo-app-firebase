@@ -64,6 +64,8 @@ import java.util.HashMap;
         final ImageView passwordIcon = findViewById(R.id.showHideBtn);
         final RelativeLayout signInWithGoogleBtn = findViewById(R.id.signInWithGoogleBtn);
         final AppCompatButton signInEmailAndPasswordBtn = findViewById(R.id.signInEmailAndPasswordBtn);
+        final RelativeLayout signInByPhoneBtn = findViewById(R.id.signInByPhone);
+        final TextView forgetPassword = findViewById(R.id.forgetPassword);
         auth = FirebaseAuth.getInstance();
         setupUI(findViewById(R.id.rootLayout));
         signInEmailAndPasswordBtn.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +76,18 @@ import java.util.HashMap;
                 }else{
                     checkUser();
                 }
+            }
+        });
+        signInByPhoneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginView.this, LoginByPhoneView.class));
+            }
+        });
+        forgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginView.this, ForgetPasswordView.class));
             }
         });
         passwordIcon.setOnClickListener(new View.OnClickListener() {
