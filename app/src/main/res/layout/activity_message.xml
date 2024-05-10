@@ -52,13 +52,21 @@
         android:layout_alignParentBottom="true"
         android:background="#fff">
 
+        <ImageButton
+            android:id="@+id/btn_mic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/ic_mic_24" />
+
         <EditText
             android:id="@+id/txt_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
             android:layout_toLeftOf="@+id/btn_send"
+            android:layout_toRightOf="@+id/btn_mic"
             android:hint="Type a message..."
             android:textColor="@color/colorPrimaryDark"
             android:textColorHint="@color/colorPrimaryDark" />

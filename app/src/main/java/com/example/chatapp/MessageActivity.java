@@ -54,7 +54,7 @@ public class MessageActivity extends AppCompatActivity {
     Toolbar toolbar;
     CircleImageView profileImage;
     TextView username;
-    ImageButton btn_send;
+    ImageButton btn_send, btn_mic;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference;
     DatabaseReference tokenRef;
@@ -81,6 +81,7 @@ public class MessageActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
         btn_send = findViewById(R.id.btn_send);
+        btn_mic = findViewById(R.id.btn_mic);
         txt_message = findViewById(R.id.txt_message);
         recyclerView = findViewById(R.id.recycler_view_message);
 
@@ -108,6 +109,16 @@ public class MessageActivity extends AppCompatActivity {
                     Toast.makeText(MessageActivity.this, "Enter The Message First", Toast.LENGTH_SHORT).show();
                 }
                 txt_message.setText("");
+            }
+        });
+
+        btn_mic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MessageActivity.this, MicRecorderActivity.class);
+                intent.putExtra("senderId", firebaseUser.getUid());
+                intent.putExtra("receiverId", userid);
+                startActivity(intent);
             }
         });
 
@@ -188,6 +199,7 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
+        hashMap.put("duration", 0);
         hashMap.put("time", time);
         hashMap.put("isseen", false);
         reference.child("chats").push().setValue(hashMap);

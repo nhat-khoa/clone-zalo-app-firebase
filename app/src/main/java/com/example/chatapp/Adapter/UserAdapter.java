@@ -115,9 +115,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                         Chat chat = sn.getValue(Chat.class);
                         if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid)) {
                             int lastIndex = username.lastIndexOf(' ');
-                            theLastMessage = username.substring(lastIndex + 1) + ": " + chat.getMessage();
+                            if(chat.getDuration() == 0){
+                                theLastMessage = username.substring(lastIndex + 1) + ": " + chat.getMessage();
+                            }else{
+                                theLastMessage = username.substring(lastIndex + 1) + ": [Audio Message]";
+                            }
                         } else if (chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
-                            theLastMessage = "You: " + chat.getMessage();
+                            if(chat.getDuration() == 0){
+                                theLastMessage = "You: " + chat.getMessage();
+                            }else{
+                                theLastMessage = "You: [Audio Message]";
+                            }
                         }
                     }
                     if (theLastMessage.equals("default")) {
