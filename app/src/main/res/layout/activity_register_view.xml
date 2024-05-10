@@ -53,6 +53,21 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
         />
+    <EditText
+        android:id="@+id/txtPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/input_round_back_dark"
+        android:hint="Your phone number"
+        android:maxLines="1"
+        android:inputType="text"
+        android:textSize="16sp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"

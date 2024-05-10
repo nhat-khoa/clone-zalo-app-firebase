@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -191,11 +192,19 @@ import java.util.HashMap;
              try {
                  GoogleSignInAccount account = task.getResult(ApiException.class);
                  fireBaseAuth(account.getIdToken());
+             } catch (ApiException e) {
+                 // Handle ApiException here
+                 String errorMessage = "Error: " + e.getStatusCode(); // Example of getting error code
+                 Log.e("GoogleSignIn", "Google sign-in failed with error: " + errorMessage, e); // Log the exception
+                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
              } catch (Exception e) {
-                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                 // Handle other exceptions here
+                 Log.e("GoogleSignIn", "Google sign-in failed with unknown error", e); // Log the exception
+                 Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
              }
          }
      }
+
      private void fireBaseAuth(String idToken) {
          AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
          auth.signInWithCredential(credential)

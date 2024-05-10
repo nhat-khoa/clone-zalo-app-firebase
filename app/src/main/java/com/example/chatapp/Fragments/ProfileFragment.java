@@ -51,7 +51,6 @@ public class ProfileFragment extends Fragment {
     CircleImageView profile_image;
     TextView username;
     ImageView img_edit_profile_image;
-    ImageView img_edit_username;
     DatabaseReference reference;
     FirebaseUser firebaseUser;
     StorageReference storageReference;
@@ -68,7 +67,6 @@ public class ProfileFragment extends Fragment {
         profile_image = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
         img_edit_profile_image = view.findViewById(R.id.img_edit_profile_image);
-        img_edit_username = view.findViewById(R.id.img_edit_username);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
@@ -97,12 +95,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        img_edit_username.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "Comming soon!!!", Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         return view;
     }

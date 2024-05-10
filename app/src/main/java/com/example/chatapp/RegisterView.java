@@ -43,7 +43,7 @@ public class RegisterView extends AppCompatActivity {
 
         final EditText txtEmail = findViewById(R.id.txtEmail);
         final EditText txtFullName=findViewById(R.id.txtFullName);
-        final RelativeLayout signInByPhone = findViewById(R.id.signInByPhone);
+        final EditText txtPhoneNumber=findViewById(R.id.txtPhoneNumber);
         final EditText txtPassword= findViewById(R.id.txtPassword);
         final EditText txtPasswordSubmit = findViewById(R.id.txtPasswordSubmit);
         final ImageView passwordIcon = findViewById(R.id.showHideBtn);
@@ -73,12 +73,7 @@ public class RegisterView extends AppCompatActivity {
         // Apply the same TextWatcher to both password fields
         txtPassword.addTextChangedListener(passwordWatcher);
         txtPasswordSubmit.addTextChangedListener(passwordWatcher);
-        signInByPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
 
         passwordIcon.setOnClickListener(new View.OnClickListener() {
             @Override
