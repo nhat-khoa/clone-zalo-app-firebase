@@ -75,6 +75,7 @@ public class ProfileFragment extends Fragment {
         logout = view.findViewById(R.id.logout);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserId = firebaseUser.getUid();
         reference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
         storageReference = FirebaseStorage.getInstance().getReference("AvatarUsers");
         logout.setOnClickListener(new View.OnClickListener() {
