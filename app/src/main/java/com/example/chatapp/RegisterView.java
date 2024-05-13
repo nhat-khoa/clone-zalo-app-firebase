@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.internal.TextWatcherAdapter;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -126,13 +127,18 @@ public class RegisterView extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+//                                // Lấy ID người dùng
+//                                FirebaseUser firebaseUser = task.getResult().getUser();
+//                                String userId = firebaseUser.getUid();
                                 // User is successfully created, now add to database
-                                User user = new User("", name, "drawable/ic_chat_app_24.xml", "offline", email);
+                                User user = new User("123", name, "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png", "offline", email);
                                 addUserToDatabase(user);
                                 Toast.makeText(RegisterView.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(RegisterView.this, LoginView.class));
                             } else {
                                 // Handle failures
+//                                FirebaseUser firebaseUser = task.getResult().getUser();
+//                                String userId = firebaseUser.getUid();
                                 Toast.makeText(RegisterView.this, "Failed to register user", Toast.LENGTH_SHORT).show();
                             }
                         }

@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 
 import com.example.chatapp.Fragments.ChatsFragment;
 import com.example.chatapp.Fragments.ProfileFragment;
+import com.example.chatapp.Fragments.QrCodeFragment;
 import com.example.chatapp.Fragments.UsersFragment;
 import com.example.chatapp.Model.User;
 import com.example.chatapp.Notification.Token;
@@ -63,18 +64,21 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new ChatsFragment(), "Chats");
+        viewPagerAdapter.addFragment(new QrCodeFragment(), "QR Code");
         viewPagerAdapter.addFragment(new UsersFragment(), "Friends");
         viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_chat_24);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_users_24);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_person_24);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_qr_code_24);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_users_24);
+        tabLayout.getTabAt(3).setIcon(R.drawable.ic_person_24);
 
         tabLayout.getTabAt(0).getIcon().setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
-        tabLayout.getTabAt(1).getIcon().setColorFilter(new PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN));
+        tabLayout.getTabAt(1).getIcon().setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
         tabLayout.getTabAt(2).getIcon().setColorFilter(new PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN));
+        tabLayout.getTabAt(3).getIcon().setColorFilter(new PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN));
         // thay đổi màu sắc của icon của tab
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
