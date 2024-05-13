@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,14 +19,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.chatapp.LoginView;
 import com.example.chatapp.MainActivity;
 import com.example.chatapp.MessageActivity;
 import com.example.chatapp.Model.User;
 import com.example.chatapp.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -50,6 +55,7 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
     CircleImageView profile_image;
     TextView username;
+    private String currentUserId;
     ImageView img_edit_profile_image;
     DatabaseReference reference;
     FirebaseUser firebaseUser;
@@ -58,20 +64,26 @@ public class ProfileFragment extends Fragment {
     private Uri imageUri;
     private StorageTask uploadTask;
     private ValueEventListener valueEventListener1;
-
+    private RelativeLayout logout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         profile_image = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
         img_edit_profile_image = view.findViewById(R.id.img_edit_profile_image);
+        logout = view.findViewById(R.id.logout);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
         storageReference = FirebaseStorage.getInstance().getReference("AvatarUsers");
-
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setStatus("offline"); // Set user status to offline
+                performLogout();
+            }
+        });
         valueEventListener1 = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -94,9 +106,6 @@ public class ProfileFragment extends Fragment {
                 openImage();
             }
         });
-
-
-
         return view;
     }
 
@@ -182,6 +191,45 @@ public class ProfileFragment extends Fragment {
         } else {
             Toast.makeText(getContext(), "No image selected!!!", Toast.LENGTH_SHORT).show();
         }
+    }
+    private void setStatus(String status) {
+        // Assuming 'currentUserId' is already defined and 'reference' is initialized
+        reference = FirebaseDatabase.getInstance().getReference("users").child(currentUserId);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("setStatus", "Failed to update user status");
+                }
+            }
+        });
+    }
+
+    private void performLogout() {
+        Context context = getActivity();
+        if (context == null) return; // Thoát nếu context không hợp lệ
+
+        FirebaseAuth.getInstance().signOut();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        GoogleSignIn.getClient(context, gso).signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(context, "Successfully logged out", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, LoginView.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(context, "Failed to log out", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
