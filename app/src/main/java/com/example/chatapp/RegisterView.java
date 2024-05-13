@@ -127,7 +127,7 @@ public class RegisterView extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // User is successfully created, now add to database
-                                User user = new User("", name, "ok", "offline", email);
+                                User user = new User("", name, "drawable/ic_chat_app_24.xml", "offline", email);
                                 addUserToDatabase(user);
                                 Toast.makeText(RegisterView.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(RegisterView.this, LoginView.class));
