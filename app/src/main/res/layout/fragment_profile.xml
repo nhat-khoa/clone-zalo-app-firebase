@@ -36,8 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_image"
-            android:layout_marginLeft="-20dp"
             android:layout_marginTop="-20dp"
+            android:layout_marginRight="-40dp"
             android:layout_toRightOf="@+id/profile_image"
             android:src="@drawable/ic_edit_24" />
 
@@ -53,6 +53,23 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <RelativeLayout
+            android:id="@+id/qr_code"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/input_round_back_dark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="QR CODE"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </RelativeLayout>
         <RelativeLayout
             android:id="@+id/logout"
             android:layout_width="match_parent"
