@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,12 +29,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterView extends AppCompatActivity {
-
+    private static final String TAG = RegisterView.class.getSimpleName();
     private boolean passwordShowing = false;
     private EditText txtEmail, txtFullName, txtPassword, txtPasswordSubmit;
     private AppCompatButton btnRegister;
     private FirebaseAuth auth;
     private DatabaseReference database;
+    private TextView textViewSignIn;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -46,9 +48,17 @@ public class RegisterView extends AppCompatActivity {
         txtPassword = findViewById(R.id.txtPassword);
         txtPasswordSubmit = findViewById(R.id.txtPasswordSubmit);
         btnRegister = findViewById(R.id.signupEmailAndPasswordBtn);
+        textViewSignIn = findViewById(R.id.signInBtnDirector);
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
+
+        textViewSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Thiết lập sự kiện click cho nút đăng ký
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -127,19 +137,14 @@ public class RegisterView extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-//                                // Lấy ID người dùng
-//                                FirebaseUser firebaseUser = task.getResult().getUser();
-//                                String userId = firebaseUser.getUid();
-                                // User is successfully created, now add to database
-                                User user = new User("123", name, "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png", "offline", email);
+                                String userID = task.getResult().getUser().getUid();
+                                System.out.println("User ID: " + userID);
+                                User user = new User(userID, name, "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png", "offline", email);
                                 addUserToDatabase(user);
                                 Toast.makeText(RegisterView.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(RegisterView.this, LoginView.class));
+                                finish();
                             } else {
-                                // Handle failures
-//                                FirebaseUser firebaseUser = task.getResult().getUser();
-//                                String userId = firebaseUser.getUid();
-                                Toast.makeText(RegisterView.this, "Failed to register user", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterView.this, "Failed to register user: " + task.getException(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -147,18 +152,17 @@ public class RegisterView extends AppCompatActivity {
     }
 
     private void addUserToDatabase(User user) {
-        String userId = auth.getCurrentUser().getUid();
-        DatabaseReference userRef = database.child("users").child(userId);
+        DatabaseReference userRef = database.child("users").child(user.getId());
         userRef.setValue(user)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // User added to database successfully
-                            Log.d("Database", "User added to database");
+                            Log.d(TAG, "User added to database");
                         } else {
                             // Failed to add user to database
-                            Log.e("DatabaseError", "Failed to add user to database: ", task.getException());
+                            Log.e(TAG, "Failed to add user to database: ", task.getException());
                         }
                     }
                 });

@@ -1,5 +1,6 @@
 package com.example.chatapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
@@ -19,6 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -27,12 +30,15 @@ import com.google.firebase.auth.FirebaseUser;
 import java.text.BreakIterator;
 
 public class ForgetPasswordView extends AppCompatActivity {
+    private static final String TAG = ForgetPasswordView.class.getSimpleName();
     TextView resendOTP;
     private static final long TIME_WAIT = 60000;
     private static final long TIME_COUNTDOWN = 1000;
 
     private FirebaseAuth firebaseAuth;
-    private TextView txtPhoneAndEmail;
+    EditText txtPhoneAndEmail;
+    private TextView txtEmail, textViewSignIn;
+    private  AppCompatButton btn_forgetPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +48,50 @@ public class ForgetPasswordView extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        final EditText txtPhoneAndEmail =  findViewById(R.id.txtPhoneAndEmail);
+        txtEmail = findViewById(R.id.txtEmail);
+        textViewSignIn = findViewById(R.id.signInBtnDirector);
+        btn_forgetPassword = findViewById(R.id.btn_forgetPassword);
+
+
         final RelativeLayout wrapTxtCode = findViewById(R.id.wrapTxtCode);
         resendOTP = findViewById(R.id.resendOTP);
         final EditText txtCode = findViewById(R.id.txtCode);
-        final AppCompatButton changePasswordBtn = findViewById(R.id.changePasswordBtn);
-        final RelativeLayout signInWithEmailAndPassword = findViewById(R.id.signInWithEmailAndPassword);
 
-        signInWithEmailAndPassword.setOnClickListener(new View.OnClickListener() {
+//        final RelativeLayout signInWithEmailAndPassword = findViewById(R.id.signInWithEmailAndPassword);
+
+//        signInWithEmailAndPassword.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(ForgetPasswordView.this, LoginView.class));
+//            }
+//        });
+
+        textViewSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ForgetPasswordView.this, LoginView.class));
+                finish();
+            }
+        });
+
+        btn_forgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                String emailAddress = txtEmail.getText().toString().trim();
+                auth.sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(ForgetPasswordView.this, "Email sent. Please check email to reset password!!!", Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "Email sent.");
+                                    finish();
+                                } else {
+                                    Log.d(TAG, "Email sent fail" + task.getException());
+                                    Toast.makeText(ForgetPasswordView.this, "Email sent fail: "+task.getException(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
 
@@ -67,57 +106,57 @@ public class ForgetPasswordView extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // Kiểm tra độ dài của chuỗi trong resendOTP
-                if (s.length() == 6) {
-                    changePasswordBtn.setEnabled(true);
-                    changePasswordBtn.setAlpha(1.0f);
-                } else {
-                    // Nếu không đủ 6 ký tự, vô hiệu hóa và làm mờ nút changePasswordBtn
-                    changePasswordBtn.setEnabled(false);
-                    changePasswordBtn.setAlpha(0.5f);
-                }
+//                // Kiểm tra độ dài của chuỗi trong resendOTP
+//                if (s.length() == 6) {
+//                    changePasswordBtn.setEnabled(true);
+//                    changePasswordBtn.setAlpha(1.0f);
+//                } else {
+//                    // Nếu không đủ 6 ký tự, vô hiệu hóa và làm mờ nút changePasswordBtn
+//                    changePasswordBtn.setEnabled(false);
+//                    changePasswordBtn.setAlpha(0.5f);
+//                }
             }
         });
 
-        txtPhoneAndEmail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+//        txtPhoneAndEmail.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                // Không cần làm gì ở đây
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                Log.d("Debug", "Current text length: " + s);
+//                if (s.length() == 10) {
+//                    startCountdown();
+//                    wrapTxtCode.setVisibility(View.VISIBLE);
+//                    resendOTP.setVisibility(View.VISIBLE);
+//                    Log.d("Debug", "txtCode is now visible");
+//                    // Xử lý gửi OTP ở dưới đây
+//                    sendOTPToUser(s.toString());
+//                } else {
+//                    wrapTxtCode.setVisibility(View.GONE);
+//                    resendOTP.setVisibility(View.GONE);
+//                    Log.d("Debug", "txtCode is now gone");
+//                }
+//            }
+//        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Không cần làm gì ở đây
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.d("Debug", "Current text length: " + s);
-                if (s.length() == 10) {
-                    startCountdown();
-                    wrapTxtCode.setVisibility(View.VISIBLE);
-                    resendOTP.setVisibility(View.VISIBLE);
-                    Log.d("Debug", "txtCode is now visible");
-                    // Xử lý gửi OTP ở dưới đây
-                    sendOTPToUser(s.toString());
-                } else {
-                    wrapTxtCode.setVisibility(View.GONE);
-                    resendOTP.setVisibility(View.GONE);
-                    Log.d("Debug", "txtCode is now gone");
-                }
-            }
-        });
-
-        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String verificationCode = txtCode.getText().toString().trim();
-                if (verificationCode.length() == 6) {
-                    resetPasswordWithVerificationCode(verificationCode);
-                } else {
-                    Toast.makeText(ForgetPasswordView.this, "Invalid verification code", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String verificationCode = txtCode.getText().toString().trim();
+//                if (verificationCode.length() == 6) {
+//                    resetPasswordWithVerificationCode(verificationCode);
+//                } else {
+//                    Toast.makeText(ForgetPasswordView.this, "Invalid verification code", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
         resendOTP.setOnClickListener(new View.OnClickListener() {
             @Override

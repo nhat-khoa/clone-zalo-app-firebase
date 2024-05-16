@@ -19,9 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="8dp"
+        android:gravity="center"
         android:orientation="vertical"
-        android:gravity="center">
+        android:padding="8dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -67,9 +67,11 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="QR CODE"
+                android:textColor="@color/black"
                 android:textSize="16dp"
                 android:textStyle="bold" />
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/logout"
             android:layout_width="match_parent"
@@ -84,11 +86,11 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Logout"
+                android:textColor="@color/black"
                 android:textSize="16dp"
                 android:textStyle="bold" />
         </RelativeLayout>
     </LinearLayout>
-
 
 
 </FrameLayout>
