@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,14 +53,14 @@ import java.util.HashMap;
      private GoogleSignInClient mGoogleSignInClient;
      private int RC_SIGN_IN = 20;
      private FirebaseUser firebaseUser;
-     EditText txtEmail,txtPassword;
+     private EditText txtEmail,txtPassword;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_view);
 
-        final EditText txtEmail = findViewById(R.id.txtEmail);
-        final EditText txtPassword = findViewById(R.id.txtPassword);
+        txtEmail = findViewById(R.id.txtEmail);
+        txtPassword = findViewById(R.id.txtPassword);
         final TextView signUpBtn = findViewById(R.id.signUpBtnDirector);
         final ImageView passwordIcon = findViewById(R.id.showHideBtn);
         final RelativeLayout signInWithGoogleBtn = findViewById(R.id.signInWithGoogleBtn);
@@ -71,11 +72,11 @@ import java.util.HashMap;
         signInEmailAndPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!validateUsername()| !validatePassword()){
-
-                }else{
+//                if(!validateUsername()| !validatePassword()){
+//
+//                }else{
                     checkUser();
-                }
+//                }
             }
         });
         signInByPhoneBtn.setOnClickListener(new View.OnClickListener() {
@@ -191,11 +192,19 @@ import java.util.HashMap;
              try {
                  GoogleSignInAccount account = task.getResult(ApiException.class);
                  fireBaseAuth(account.getIdToken());
+             } catch (ApiException e) {
+                 // Handle ApiException here
+                 String errorMessage = "Error: " + e.getStatusCode(); // Example of getting error code
+                 Log.e("GoogleSignIn", "Google sign-in failed with error: " + errorMessage, e); // Log the exception
+                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
              } catch (Exception e) {
-                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                 // Handle other exceptions here
+                 Log.e("GoogleSignIn", "Google sign-in failed with unknown error", e); // Log the exception
+                 Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
              }
          }
      }
+
      private void fireBaseAuth(String idToken) {
          AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
          auth.signInWithCredential(credential)
@@ -302,7 +311,7 @@ import java.util.HashMap;
                              Toast.makeText(LoginView.this, "Login Successfully", Toast.LENGTH_SHORT).show();
                              startActivity(new Intent(LoginView.this,MainActivity.class));
                          }else{
-                             Toast.makeText(LoginView.this, "Login Error", Toast.LENGTH_SHORT).show();
+                             Toast.makeText(LoginView.this, "Login Error: "+task.getException(), Toast.LENGTH_SHORT).show();
                          }
                      }
                  });

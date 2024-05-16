@@ -57,6 +57,15 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") //QR Code
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-auth") // Firebase Auth
+
+    // Google Play services
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies

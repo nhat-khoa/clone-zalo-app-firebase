@@ -145,6 +145,7 @@ public class QrCodeFragment extends Fragment {
                                 hashMap.put("message", "Hello, I'm from QR Code!!!");
                                 hashMap.put("time", new Date().getTime());
                                 hashMap.put("isseen", false);
+                                hashMap.put("duration", 0);
                                 databaseReference.child("chats").push().setValue(hashMap);
 
                                 sendNotification(firebaseUser.getDisplayName(), "Hello, I'm from QR Code!!!", userIdFromQRCode);
