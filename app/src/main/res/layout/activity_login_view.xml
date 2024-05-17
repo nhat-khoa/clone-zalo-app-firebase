@@ -180,13 +180,13 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/baseline_local_phone_24" />
+            android:src="@drawable/ic_facebook_24px" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Sign in by phone"
+            android:text="Login with Facebook"
             android:textSize="16dp"
             android:textStyle="bold" />
     </RelativeLayout>

@@ -54,25 +54,6 @@
             android:textStyle="bold" />
 
         <RelativeLayout
-            android:id="@+id/qr_code"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/input_round_back_dark">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="QR CODE"
-                android:textColor="@color/black"
-                android:textSize="16dp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <RelativeLayout
             android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -81,12 +62,20 @@
             android:layout_marginEnd="20dp"
             android:background="@drawable/input_round_back_dark">
 
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_logout_24" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Logout"
-                android:textColor="@color/black"
+                android:textColor="@color/red"
                 android:textSize="16dp"
                 android:textStyle="bold" />
         </RelativeLayout>
