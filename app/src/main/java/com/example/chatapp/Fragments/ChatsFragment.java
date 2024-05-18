@@ -7,13 +7,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.chatapp.Adapter.UserAdapter;
-import com.example.chatapp.CallingActivity;
+import com.example.chatapp.Adapter.FriendAdapter;
 import com.example.chatapp.Model.Chat;
 import com.example.chatapp.Model.User;
 import com.example.chatapp.R;
@@ -26,13 +24,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ChatsFragment extends Fragment {
     private String TAG = ChatsFragment.this.getClass().getSimpleName();
     private RecyclerView recyclerView;
-    private UserAdapter userAdapter;
+    private FriendAdapter userAdapter;
     private List<User> mUser;
     private List<String> usersList;
     FirebaseUser firebaseUser;
@@ -94,7 +91,7 @@ public class ChatsFragment extends Fragment {
                     }
                 }
 
-                userAdapter = new UserAdapter(getContext(), mUser, true);
+                userAdapter = new FriendAdapter(getContext(), mUser, true);
                 recyclerView.setAdapter(userAdapter);
             }
 

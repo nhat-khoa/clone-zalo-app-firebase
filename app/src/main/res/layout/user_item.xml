@@ -1,64 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="username"
         android:id="@+id/username"
-        android:layout_toEndOf="@+id/profileImage"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/black"
-        android:textSize="20sp"/>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        app:civ_border_width="10dp"
-        app:civ_border_color="#05F60F"
-        android:src="@mipmap/ic_launcher"
-        android:layout_below="@+id/username"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="-8dp"
-        android:layout_toRightOf="@+id/profileImage"
-        android:visibility="gone"
-        android:id="@+id/img_on"/>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        app:civ_border_width="10dp"
-        app:civ_border_color="#bfbfbf"
-        android:src="@mipmap/ic_launcher"
-        android:layout_below="@+id/username"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="-8dp"
-        android:layout_toRightOf="@+id/profileImage"
-        android:visibility="gone"
-        android:id="@+id/img_off"/>
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/username"
-        android:layout_toRightOf="@+id/profileImage"
-        android:layout_marginTop="1dp"
-        android:layout_marginLeft="15dp"
-        android:text="Last message"
-        android:textSize="15sp"
-        android:maxLines="1"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/profileImage"
+        android:text="username"
         android:textColor="@color/black"
-        android:id="@+id/last_message"/>
+        android:textSize="20sp" />
+
+<!--    <Button-->
+<!--        android:id="@+id/btn_addFriend"-->
+<!--        style="?attr/materialButtonOutlinedStyle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        android:drawableLeft="@drawable/ic_person_add_24"-->
+<!--        android:text=" Add Friend"-->
+<!--        android:visibility="gone" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/txt_statusFriend"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        android:layout_marginRight="20dp"-->
+<!--        android:text="Friend"-->
+<!--        android:textColor="@color/colorPrimaryDark"-->
+<!--        android:textSize="20sp" />-->
+
 
 </RelativeLayout>

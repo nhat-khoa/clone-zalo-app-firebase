@@ -21,6 +21,12 @@
         android:theme="@style/Theme.ChatApp"
         tools:targetApi="31">
         <activity
+            android:name=".ListFriendRequestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileUserViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".MicRecorderActivity"
             android:exported="false" />
         <activity
@@ -31,9 +37,6 @@
             android:exported="false" />
         <activity
             android:name=".RegisterView"
-            android:exported="false" />
-        <activity
-            android:name=".LoginScreen"
             android:exported="false" />
         <activity
             android:name=".TEST"

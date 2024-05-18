@@ -32,7 +32,7 @@
         android:layout_below="@+id/txt_username"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
-        android:text="Scan the QR Code to chat with me"
+        android:text="Scan the QR Code to add friend"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp" />
 

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.chatapp.ListFriendRequestActivity;
 import com.example.chatapp.LoginView;
 import com.example.chatapp.MainActivity;
 import com.example.chatapp.MessageActivity;
@@ -64,7 +65,8 @@ public class ProfileFragment extends Fragment {
     private Uri imageUri;
     private StorageTask uploadTask;
     private ValueEventListener valueEventListener1;
-    private RelativeLayout logout;
+    private RelativeLayout logout, list_friend_request;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -73,11 +75,14 @@ public class ProfileFragment extends Fragment {
         username = view.findViewById(R.id.username);
         img_edit_profile_image = view.findViewById(R.id.img_edit_profile_image);
         logout = view.findViewById(R.id.logout);
+        list_friend_request = view.findViewById(R.id.list_friend_request);
+
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         currentUserId = firebaseUser.getUid();
         reference = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.getUid());
         storageReference = FirebaseStorage.getInstance().getReference("AvatarUsers");
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +90,14 @@ public class ProfileFragment extends Fragment {
                 performLogout();
             }
         });
+
+        list_friend_request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ListFriendRequestActivity.class));
+            }
+        });
+
         valueEventListener1 = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -193,6 +206,7 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), "No image selected!!!", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void setStatus(String status) {
         // Assuming 'currentUserId' is already defined and 'reference' is initialized
         reference = FirebaseDatabase.getInstance().getReference("users").child(currentUserId);

@@ -19,8 +19,8 @@ import android.view.MenuInflater;
 import com.example.chatapp.Fragments.ChatsFragment;
 import com.example.chatapp.Fragments.ProfileFragment;
 import com.example.chatapp.Fragments.QrCodeFragment;
+import com.example.chatapp.Fragments.FriendsFragment;
 import com.example.chatapp.Fragments.UsersFragment;
-import com.example.chatapp.Model.User;
 import com.example.chatapp.Notification.Token;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -64,21 +64,24 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new ChatsFragment(), "Chats");
+        viewPagerAdapter.addFragment(new FriendsFragment(), "Friends");
         viewPagerAdapter.addFragment(new QrCodeFragment(), "QR Code");
-        viewPagerAdapter.addFragment(new UsersFragment(), "Friends");
+        viewPagerAdapter.addFragment(new UsersFragment(), "Users");
         viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_chat_24);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_qr_code_24);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_users_24);
-        tabLayout.getTabAt(3).setIcon(R.drawable.ic_person_24);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_friend_24);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_qr_code_24);
+        tabLayout.getTabAt(3).setIcon(R.drawable.ic_user_24);
+        tabLayout.getTabAt(4).setIcon(R.drawable.ic_person_24);
 
         tabLayout.getTabAt(0).getIcon().setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
-        tabLayout.getTabAt(1).getIcon().setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
+        tabLayout.getTabAt(1).getIcon().setColorFilter(new PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN));
         tabLayout.getTabAt(2).getIcon().setColorFilter(new PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN));
         tabLayout.getTabAt(3).getIcon().setColorFilter(new PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN));
+        tabLayout.getTabAt(4).getIcon().setColorFilter(new PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN));
         // thay đổi màu sắc của icon của tab
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -182,14 +185,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Optionally, you can include the status update here if needed.
-        // status("online");
+         status("online");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Optionally, you can include the status update here if needed.
-        // status("offline");
+         status("offline");
+    }
+
+    private void status(String status) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        FirebaseDatabase.getInstance().getReference("users").child(currentUserId).updateChildren(hashMap);
     }
 }
