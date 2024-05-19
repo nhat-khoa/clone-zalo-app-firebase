@@ -51,27 +51,27 @@ public class UsersFragment extends Fragment {
         mUsers = new ArrayList<>();
 
 
-//        search_users = view.findViewById(R.id.txt_search);
-//        search_users.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (!s.toString().equals("")) {
-//                    searchUsers(s.toString().toLowerCase());
-//                } else {
-//                    readUsers();
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
+        search_users = view.findViewById(R.id.txt_search);
+        search_users.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals("")) {
+                    searchUsers(s.toString().toLowerCase());
+                } else {
+                    readUsers();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         return view;
     }
@@ -82,33 +82,31 @@ public class UsersFragment extends Fragment {
         readUsers();
     }
 
-//    private void searchUsers(String str) {
-//        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-//        Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("email")
-//                .startAt(str)
-//                .endAt(str + "\\uf8ff");
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                mUsers.clear();
-//                for (DataSnapshot sn : snapshot.getChildren()) {
-//                    User user = sn.getValue(User.class);
-//                    assert user != null;
-//                    assert firebaseUser != null;
-//                    if (!user.getId().equals(firebaseUser.getUid())) {
-//                        mUsers.add(user);
-//                    }
-//                }
-//                userAdapter = new UserAdapter(getContext(), mUsers);
-//                recyclerView.setAdapter(userAdapter);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//    }
+    private void searchUsers(String str) {
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("email")
+                .startAt(str)
+                .endAt(str + "\\uf8ff");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mUsers.clear();
+                for (DataSnapshot sn : snapshot.getChildren()) {
+                    User user = sn.getValue(User.class);
+                    if (!user.getId().equals(firebaseUser.getUid())) {
+                        mUsers.add(user);
+                    }
+                }
+                userAdapter = new UserAdapter(getContext(), mUsers);
+                recyclerView.setAdapter(userAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     private void readUsers() {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

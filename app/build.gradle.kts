@@ -50,14 +50,13 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") //QR Code
 
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
-    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-database") // realtime db
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.firebase:firebase-messaging")
-    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-storage") //mp3, image
+    implementation("com.google.firebase:firebase-messaging") // notification message
+    implementation("com.google.firebase:firebase-auth") // login
 
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0") // login with google
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0") // Call API
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
