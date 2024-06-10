@@ -39,24 +39,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
+        String channelId = "";
         // Tạo kênh thông báo nếu chưa có
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelId = getString(R.string.channel_id); // Id kênh thông báo
+            channelId = getString(R.string.channel_id); // Id kênh thông báo
             CharSequence name = getString(R.string.channel_name); // Tên kênh thông báo
             String description = getString(R.string.channel_description); // Mô tả kênh thông báo
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(channelId, name, importance);
             channel.setDescription(description);
             notificationManager.createNotificationChannel(channel);
-
-            // Tạo và hiển thị thông báo
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId)
-                    .setSmallIcon(R.drawable.ic_chat_app_24)
-                    .setContentTitle("New Message")
-                    .setContentText(mSenderName + ": " + mMessage)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            notificationManager.notify(0, builder.build());
         }
+        // Tạo và hiển thị thông báo
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId)
+                .setSmallIcon(R.drawable.ic_chat_app_24)
+                .setContentTitle("New Message")
+                .setContentText(mSenderName + ": " + mMessage)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        notificationManager.notify(0, builder.build());
     }
 
     private void updateToken() {

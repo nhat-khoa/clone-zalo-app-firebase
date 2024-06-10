@@ -33,8 +33,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class VideoChatActivity extends AppCompatActivity implements Session.SessionListener, PublisherKit.PublisherListener {
 
     private static String API_KEY = "47881211";
-    private static String SESSION_ID = "1_MX40Nzg4MTIxMX5-MTcxNjEwNTU1NDk1M340b0J0SmtxMWQ5VkpIL3pvcHBuV3VDczl-fn4";
-    private static String TOKEN = "T1==cGFydG5lcl9pZD00Nzg4MTIxMSZzaWc9MWY3ZjEyZGRmZWYyODk4ODdlZjA5Njk1YmZjZjI0OTQ5Zjc0MjBlZTpzZXNzaW9uX2lkPTFfTVg0ME56ZzRNVEl4TVg1LU1UY3hOakV3TlRVMU5EazFNMzQwYjBKMFNtdHhNV1E1VmtwSUwzcHZjSEJ1VjNWRGN6bC1mbjQmY3JlYXRlX3RpbWU9MTcxNjEwNTU2NSZub25jZT0wLjY0OTc0MTc1NzcxNTEzMTImcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTcxODY5NzU2MyZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
+    private static String SESSION_ID = "1_MX40Nzg4MTIxMX5-MTcxODAwMjgwNDE4N35ISUk4VEZpNUxBWDRuakJ1OFM1WW4xNkl-fn4";
+    private static String TOKEN = "T1==cGFydG5lcl9pZD00Nzg4MTIxMSZzaWc9NDc1ZmEyZjIzNGJkNDUwZDFkODUyMTgwNjRkNzMwZTk4MjFlNzhmNjpzZXNzaW9uX2lkPTFfTVg0ME56ZzRNVEl4TVg1LU1UY3hPREF3TWpnd05ERTROMzVJU1VrNFZFWnBOVXhCV0RSdWFrSjFPRk0xV1c0eE5rbC1mbjQmY3JlYXRlX3RpbWU9MTcxODAwMjgyMiZub25jZT0wLjk4MDkyMjE2NzI5MDMzODMmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTcyMDU5NDgyMSZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
     private static final String LOG_TAG = VideoChatActivity.class.getSimpleName();
     private static final int RC_VIDEO_APP_PERM = 124;
     private FrameLayout mPublisherViewController;
