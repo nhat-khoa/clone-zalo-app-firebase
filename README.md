@@ -51,6 +51,7 @@ A **Zalo-inspired messaging app** built with **Java** and powered by **Firebase 
 ## 📸 Screenshots
 
 *(Optional: Add screenshots of your login, chat UI, call UI, QR scanning, etc.)*
+![Screenshot 2024-05-23 111525](https://github.com/user-attachments/assets/e5f00b42-1e4d-43f1-bc83-a856906da60b)
 
 ---
 
